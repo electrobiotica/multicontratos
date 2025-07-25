@@ -6,4 +6,5 @@ Pillow==9.5.0
 easyocr==1.7.1
 numpy==1.26.4
 fpdf==1.7.2
-torch==2.2.2
+torch==2.0.1+cpu
+-f https://download.pytorch.org/whl/torch_stable.html

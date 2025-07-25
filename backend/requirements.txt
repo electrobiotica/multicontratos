@@ -1,0 +1,8 @@
+flask
+flask-cors
+openai
+python-dotenv
+Pillow
+easyocr
+numpy
+fpdf

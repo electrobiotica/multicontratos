@@ -1,0 +1,34 @@
+{
+  "contrato": {
+    "nombre": "Contrato de Alquiler",
+    "prompt": "Analiz\u00e1 este contrato de alquiler bajo la normativa argentina 2025, incluyendo Ley 941, disposici\u00f3n 521/2025 y el C\u00f3digo Civil y Comercial. Se\u00f1al\u00e1 cl\u00e1usulas abusivas o ilegales y explic\u00e1 por qu\u00e9:"
+  },
+  "expensas": {
+    "nombre": "Expensas / Consorcio",
+    "prompt": "Analiz\u00e1 este resumen de expensas seg\u00fan la Ley 941, disposici\u00f3n 521/2025 y el C\u00f3digo Civil y Comercial. Indic\u00e1 si hay \u00edtems incorrectos o abusivos:"
+  },
+  "laboral": {
+    "nombre": "Contrato Laboral",
+    "prompt": "Analiz\u00e1 este contrato laboral bajo la legislaci\u00f3n argentina 2025. Se\u00f1al\u00e1 cl\u00e1usulas abusivas, omisiones o incompatibilidades con el r\u00e9gimen laboral vigente:"
+  },
+  "credito": {
+    "nombre": "Tarjeta de Cr\u00e9dito / Pr\u00e9stamos",
+    "prompt": "Revis\u00e1 este contrato financiero seg\u00fan la Ley de Defensa del Consumidor (Argentina) y el C\u00f3digo Civil y Comercial. Detect\u00e1 cl\u00e1usulas abusivas, falta de transparencia o cargos indebidos:"
+  },
+  "medico": {
+    "nombre": "Consentimiento M\u00e9dico",
+    "prompt": "Analiz\u00e1 este consentimiento informado m\u00e9dico seg\u00fan la Ley de Derechos del Paciente (Ley 26.529) y normas \u00e9ticas vigentes en Argentina:"
+  },
+  "compra": {
+    "nombre": "Compra-Venta Vehicular",
+    "prompt": "Revis\u00e1 este contrato de compra-venta de automotor seg\u00fan la normativa argentina. Indic\u00e1 si cumple con los requisitos legales m\u00ednimos:"
+  },
+  "musica_manager": {
+    "nombre": "Contrato de Manager Musical",
+    "prompt": "Analiz\u00e1 este contrato de representaci\u00f3n art\u00edstica (manager musical) seg\u00fan la normativa argentina, incluyendo Ley de Propiedad Intelectual, C\u00f3digo Civil y leyes laborales aplicables:"
+  },
+  "musica_disco": {
+    "nombre": "Contrato Discogr\u00e1fico",
+    "prompt": "Revis\u00e1 este contrato discogr\u00e1fico (licencia, distribuci\u00f3n, regal\u00edas) seg\u00fan normativa argentina. Se\u00f1al\u00e1 cl\u00e1usulas de cesi\u00f3n total de derechos, duraci\u00f3n excesiva o pagos injustos:"
+  }
+}

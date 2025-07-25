@@ -1,10 +1,8 @@
-flask==2.3.3
-flask-cors==4.0.0
-openai==1.25.0
-python-dotenv==1.0.1
-Pillow==9.5.0
-easyocr==1.7.1
-numpy==1.26.4
-fpdf==1.7.2
-torch==2.0.1+cpu
--f https://download.pytorch.org/whl/torch_stable.html
+flask
+flask-cors
+openai
+python-dotenv
+Pillow
+easyocr
+numpy
+fpdf

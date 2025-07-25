@@ -1,22 +1,19 @@
-
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import os
 import base64
 from dotenv import load_dotenv
 import easyocr
-import io
 from PIL import Image
 import openai
 import json
 import numpy as np
 
 load_dotenv()
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='.')
 CORS(app)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 reader = easyocr.Reader(['es'], gpu=False)
 
 with open("contratos.json", encoding="utf-8") as f:
@@ -24,6 +21,29 @@ with open("contratos.json", encoding="utf-8") as f:
 
 PROMPTS = {key: value["prompt"] for key, value in contratos_data.items()}
 NOMBRES = {key: value["nombre"] for key, value in contratos_data.items()}
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/auditoria.html")
+def auditoria():
+    return render_template("auditoria.html")
+
+@app.route("/legal.html")
+def legal():
+    return render_template("legal.html")
+
+@app.route("/politica.html")
+def politica():
+    return render_template("politica.html")
+
+
+@app.route("/contratos", methods=["GET"])
+def obtener_tipos():
+    return jsonify(NOMBRES)
+
 
 @app.route("/analizar", methods=["POST"])
 def analizar():
@@ -50,6 +70,7 @@ def analizar():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/ocr", methods=["POST"])
 def ocr():
     if 'archivo' not in request.files:
@@ -61,21 +82,7 @@ def ocr():
     texto_extraido = "\n".join(resultado)
     return jsonify({"texto": texto_extraido})
 
-@app.route("/")
-def home():
-    return send_from_directory("../frontend", "index.html")
-
-@app.route("/static/<path:filename>")
-def static_files(filename):
-    return send_from_directory("../frontend/static", filename)
-
-@app.route("/<filename>")
-def fallback(filename):
-    return send_from_directory("../frontend", filename)
-
-@app.route("/contratos", methods=["GET"])
-def obtener_tipos():
-    return jsonify(NOMBRES)
 
 if __name__ == "__main__":
-    app.run(port=5050, debug=True)
+    port = int(os.environ.get("PORT", 5050))
+    app.run(host="0.0.0.0", port=port)

@@ -39,11 +39,9 @@ def legal():
 def politica():
     return render_template("politica.html")
 
-
 @app.route("/contratos", methods=["GET"])
 def obtener_tipos():
     return jsonify(NOMBRES)
-
 
 @app.route("/analizar", methods=["POST"])
 def analizar():
@@ -70,7 +68,6 @@ def analizar():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route("/ocr", methods=["POST"])
 def ocr():
     if 'archivo' not in request.files:
@@ -81,7 +78,6 @@ def ocr():
     resultado = reader.readtext(np.array(imagen), detail=0, paragraph=True)
     texto_extraido = "\n".join(resultado)
     return jsonify({"texto": texto_extraido})
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5050))

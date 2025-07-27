@@ -1,4 +1,5 @@
 flask
+flask-cors
 python-dotenv
 openai>=1.0.0
 python-docx

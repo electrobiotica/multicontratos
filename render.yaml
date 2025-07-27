@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: analizador-legal
+    env: python
+    buildCommand: ""
+    startCommand: "python main.py"
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false

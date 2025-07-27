@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analizador Legal Multicontratos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 2rem;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.light {
+      background: #f5f5f5;
+      color: #222;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    }
+    body.light .container {
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    textarea, select, input[type="file"] {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      font-size: 1rem;
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid #444;
+      border-radius: 5px;
+    }
+    body.light textarea,
+    body.light select,
+    body.light input[type="file"] {
+      background: #fff;
+      color: #000;
+      border: 1px solid #ccc;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn-secondary {
+      background: #666;
+      font-size: 0.85rem;
+      margin-left: 0.5rem;
+      padding: 0.5rem 1rem;
+    }
+    .btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    .result {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #003147;
+      border-left: 5px solid #00bcd4;
+      white-space: pre-wrap;
+    }
+    body.light .result {
+      background: #e8f4fa;
+      border-left: 5px solid #00a0c6;
+    }
+    .loader {
+      display: none;
+      margin-top: 1rem;
+      text-align: center;
+      font-style: italic;
+      color: #bbb;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .audit {
+      font-size: 0.85rem;
+      margin-top: 2rem;
+      text-align: left;
+      line-height: 1.4;
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    body.light .audit {
+      background: rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div style="text-align:right">
+      <button id="modoBtn" class="btn" onclick="toggleModo()">🌗</button>
+    </div>
+
+    <h1>Analizador Legal Multicontratos</h1>
+    <label for="tipo">Seleccioná tipo de documento a analizar:</label>
+    <select id="tipo"><option>Cargando...</option></select>
+
+    <textarea id="consulta" placeholder="Pegá acá el texto del contrato o documento legal..."></textarea>
+
+    <label for="archivo">O subí una imagen/PDF del contrato:</label>
+    <input type="file" id="archivo" accept="image/*,.pdf" onchange="extraerTextoOCR()">
+
+    <button class="btn" onclick="analizarIA()">Consultar con IA</button>
+    <div id="descargas" style="display:none; margin-top:1rem;">
+      <button class="btn btn-secondary" onclick="descargarResultado('pdf')">📄 Descargar PDF</button>
+      <button class="btn btn-secondary" onclick="descargarResultado('doc')">📝 Descargar DOC</button>
+    </div>
+
+    <div id="loader" class="loader">🔍 Analizando contrato, por favor esperá...</div>
+    <div id="resultado" class="result" style="display:none"></div>
+
+    <div class="audit">
+      ✅ Esta app cumple con la Ley 25.326 de Protección de Datos Personales (Argentina) y estándares internacionales como RGPD (UE).<br>
+      🔐 No almacenamos texto ingresado, ni datos del usuario, ni utilizamos cookies ni trackers.<br>
+      🤖 El procesamiento es realizado en tiempo real utilizando modelos de OpenAI.
+    </div>
+  </div>
+
+  <footer>
+    <hr class="my-2"/>
+    <p class="text-sm mt-3"><strong>💖 ¿Te gusta esta app? Podés invitarme un café:</strong></p>
+    <div style="display:flex; justify-content:center; gap: 1rem; flex-wrap:wrap; margin-top: 0.5rem;">
+      <a href="https://cafecito.app/marianobiotico" target="_blank" rel="noopener">
+        <img src="https://cdn.cafecito.app/imgs/buttons/button_1.png" alt="Invitame un café en cafecito.app" style="height:48px; border-radius:6px;">
+      </a>
+      <a href="https://www.buymeacoffee.com/marianobiotico" target="_blank" rel="noopener">
+        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height:48px; border-radius:6px;">
+      </a>
+    </div>
+    <small style="display:block; margin-top:1rem;">
+      Analizador Legal Multicontratos • 2025 —
+      <a href="auditoria.html" target="_blank">🛡 Auditoría</a> •
+      <a href="legal.html" target="_blank">📄 Términos</a> •
+      <a href="politica.html" target="_blank">🔐 Privacidad</a>
+    </small>
+  </footer>
+
+  <script>
+    async function cargarTiposContrato() {
+      const select = document.getElementById('tipo');
+      try {
+        const res = await fetch("/contratos");
+        const data = await res.json();
+        select.innerHTML = "";
+        for (const [clave, nombre] of Object.entries(data)) {
+          const option = document.createElement("option");
+          option.value = clave;
+          option.textContent = nombre;
+          select.appendChild(option);
+        }
+      } catch (e) {
+        console.error("❌ Error cargando tipos de contrato:", e);
+        select.innerHTML = '<option disabled>Error al cargar tipos</option>';
+      }
+    }
+
+    async function analizarIA() {
+      const tipo = document.getElementById('tipo').value;
+      const texto = document.getElementById('consulta').value.trim();
+      const loader = document.getElementById('loader');
+      const resultado = document.getElementById('resultado');
+      const descargas = document.getElementById('descargas');
+
+      if (!texto) {
+        resultado.style.display = 'block';
+        resultado.innerText = "❌ Por favor pegá texto o subí un archivo con contenido válido.";
+        return;
+      }
+
+      loader.style.display = 'block';
+      resultado.style.display = 'none';
+      resultado.innerText = '';
+      descargas.style.display = 'none';
+
+      try {
+        const res = await fetch("/analizar", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ tipo, texto })
+        });
+
+        const data = await res.json();
+        loader.style.display = 'none';
+
+        if (data.respuesta) {
+          resultado.style.display = 'block';
+          resultado.innerText = data.respuesta;
+          descargas.style.display = 'block';
+        } else {
+          resultado.style.display = 'block';
+          resultado.innerText = "❌ Error: " + (data.error || "Respuesta inválida del servidor.");
+        }
+
+      } catch (err) {
+        loader.style.display = 'none';
+        resultado.style.display = 'block';
+        resultado.innerText = "❌ Error de conexión con el servidor.";
+      }
+    }
+
+    function extraerTextoOCR() {
+      const archivo = document.getElementById('archivo').files[0];
+      if (!archivo) return;
+      const formData = new FormData();
+      formData.append('archivo', archivo);
+
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('resultado').style.display = 'none';
+
+      fetch('/ocr', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.texto) {
+          document.getElementById('consulta').value = data.texto;
+          analizarIA();
+        } else {
+          alert("❌ No se pudo extraer texto del archivo.");
+        }
+      })
+      .catch(() => alert("❌ Error en el procesamiento OCR."))
+      .finally(() => {
+        document.getElementById('loader').style.display = 'none';
+      });
+    }
+
+    function descargarResultado(tipo) {
+      const texto = document.getElementById('resultado').innerText;
+      if (!texto) return alert("No hay resultado para descargar.");
+
+      if (tipo === 'pdf') {
+        fetch('/descargar-pdf', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ texto })
+        })
+        .then(res => {
+          if (!res.ok) throw new Error("Error al generar PDF.");
+          return res.blob();
+        })
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = "analisis.pdf";
+          a.click();
+        })
+        .catch(err => alert("❌ No se pudo descargar el PDF: " + err.message));
+      } else {
+        const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = "analisis.doc";
+        link.click();
+      }
+    }
+
+    function toggleModo() {
+      document.body.classList.toggle('light');
+    }
+
+    window.onload = cargarTiposContrato;
+  </script>
+</body>
+</html>

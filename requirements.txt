@@ -1,8 +1,8 @@
 flask
-flask-cors
-openai
 python-dotenv
-Pillow
-easyocr
+openai>=1.0.0
+python-docx
+pillow
 numpy
+easyocr
 fpdf

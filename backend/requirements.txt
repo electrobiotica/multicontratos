@@ -1,0 +1,10 @@
+flask
+flask-cors
+python-dotenv
+openai
+easyocr
+Pillow
+numpy
+fpdf
+qdrant-client
+PyMuPDF

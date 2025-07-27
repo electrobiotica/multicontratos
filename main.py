@@ -7,7 +7,8 @@ from docx.shared import Pt
 from PIL import Image
 import numpy as np
 import openai
-import easyocr
+import pytesseract
+from PIL import Image
 
 load_dotenv()
 
@@ -25,9 +26,6 @@ if not OPENAI_API_KEY:
     raise RuntimeError("❌ OPENAI_API_KEY no está configurada.")
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
 MODEL = "gpt-4o"
-
-# OCR
-reader = easyocr.Reader(['es'], gpu=False)
 
 # Contratos
 with open("contratos.json", encoding="utf-8") as f:
@@ -74,7 +72,7 @@ def ocr():
     try:
         archivo = request.files["archivo"]
         imagen = Image.open(archivo.stream).convert("RGB")
-        texto = "\n".join(reader.readtext(np.array(imagen), detail=0, paragraph=True))
+        texto = pytesseract.image_to_string(imagen, lang="spa")
         return jsonify({"texto": texto})
     except Exception as e:
         traceback.print_exc()

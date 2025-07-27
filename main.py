@@ -71,17 +71,27 @@ def analizar():
 def ocr():
     try:
         archivo = request.files["archivo"]
-        imagen = Image.open(archivo.stream).convert("L")  # escala de grises
+        imagen = Image.open(archivo.stream).convert("L")  # Escala de grises
 
-        # Preprocesamiento: binarización (umbral simple)
+        # Binarización simple
         umbral = 140
         imagen = imagen.point(lambda x: 0 if x < umbral else 255, "1")
 
-        texto = pytesseract.image_to_string(imagen, lang="spa")
+        try:
+            texto = pytesseract.image_to_string(imagen, lang="spa")
+        except pytesseract.TesseractError:
+            # Fallback sin idioma si falla
+            texto = pytesseract.image_to_string(imagen)
+
+        if not texto.strip():
+            return jsonify({"error": "Texto vacío o ilegible extraído por OCR"}), 400
+
         return jsonify({"texto": texto})
+
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": "Error en OCR"}), 500
+
 
 
 @app.route("/descargar-pdf", methods=["POST"])

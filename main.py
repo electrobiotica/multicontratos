@@ -17,7 +17,7 @@ CORS(app)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-reader = easyocr.Reader(['es'], gpu=True)
+reader = easyocr.Reader(['es'], gpu=False)
 
 with open("contratos.json", encoding="utf-8") as f:
     contratos_data = json.load(f)

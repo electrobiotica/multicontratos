@@ -1,12 +1,9 @@
-# Versiones compatibles con CPU
-torch==2.1.2+cpu
---extra-index-url https://download.pytorch.org/whl/cpu
-
+torch
 easyocr
 flask
 flask-cors
 python-dotenv
-openai>=1.0.0
+openai
 python-docx
 pillow
 numpy

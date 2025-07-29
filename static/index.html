@@ -174,50 +174,51 @@
     }
 
     async function analizarIA() {
-      const tipo = document.getElementById('tipo').value;
-      const texto = document.getElementById('consulta').value.trim();
-      const loader = document.getElementById('loader');
-      const resultado = document.getElementById('resultado');
-      const descargas = document.getElementById('descargas');
+  const tipo = document.getElementById('tipo').value;
+  const texto = document.getElementById('consulta').value.trim();
+  const loader = document.getElementById('loader');
+  const overlay = document.getElementById('overlay');
+  const resultado = document.getElementById('resultado');
+  const descargas = document.getElementById('descargas');
 
-      if (!texto) {
-        resultado.style.display = 'block';
-        resultado.innerText = "❌ Por favor pegá texto o subí un archivo con contenido válido.";
-        return;
-      }
+  if (!texto) {
+    resultado.style.display = 'block';
+    resultado.innerText = "❌ Por favor pegá texto o subí un archivo con contenido válido.";
+    return;
+  }
 
-      loader.style.display = 'block';
-      resultado.style.display = 'none';
-      resultado.innerText = '';
-      descargas.style.display = 'none';
+  overlay.style.display = 'flex';  // Mostrar overlay
+  resultado.style.display = 'none';
+  resultado.innerText = '';
+  descargas.style.display = 'none';
 
-      try {
-        const res = await fetch("/analizar", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ tipo, texto })
-        });
+  try {
+    const res = await fetch("/analizar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ tipo, texto })
+    });
 
-        const data = await res.json();
-        loader.style.display = 'none';
+    const data = await res.json();
+    overlay.style.display = 'none';
 
-        if (data.respuesta) {
-          resultado.style.display = 'block';
-          resultado.innerText = data.respuesta;
-          descargas.style.display = 'block';
-        } else {
-          resultado.style.display = 'block';
-          resultado.innerText = "❌ Error: " + (data.error || "Respuesta inválida del servidor.");
-        }
-
-      } catch (err) {
-        loader.style.display = 'none';
-        resultado.style.display = 'block';
-        resultado.innerText = "❌ Error de conexión con el servidor.";
-      }
+    if (data.respuesta) {
+      resultado.style.display = 'block';
+      resultado.innerText = data.respuesta;
+      descargas.style.display = 'block';
+    } else {
+      resultado.style.display = 'block';
+      resultado.innerText = "❌ Error: " + (data.error || "Respuesta inválida del servidor.");
     }
+
+  } catch (err) {
+    overlay.style.display = 'none';
+    resultado.style.display = 'block';
+    resultado.innerText = "❌ Error de conexión con el servidor.";
+  }
+}
 
     function extraerTextoOCR() {
       const archivo = document.getElementById('archivo').files[0];
@@ -284,5 +285,33 @@
 
     window.onload = cargarTiposContrato;
   </script>
+  <div id="overlay" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 2rem;
+">
+  <div>
+    <div class="loader-spinner" style="border: 6px solid #ccc; border-top: 6px solid #00bcd4; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: auto;"></div>
+    <p style="margin-top: 1rem;">⌛ Generando análisis legal con IA...<br>Esto puede tardar unos segundos.</p>
+  </div>
+</div>
+
+<style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
 </body>
 </html>

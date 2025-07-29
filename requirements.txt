@@ -1,12 +1,8 @@
-torch
-easyocr
 flask
-flask-cors
 python-dotenv
 openai
-python-docx
-pillow
-numpy
 fpdf
-qdrant-client
-PyMuPDF
+Pillow
+requests
+python-docx
+numpy

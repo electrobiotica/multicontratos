@@ -38,11 +38,7 @@ NOMBRES = {k: v["nombre"] for k, v in contratos_data.items()}
 
 @app.route("/")
 def serve_index():
-    try:
-        with open(os.path.join(STATIC_DIR, "index.html"), encoding="utf-8") as f:
-            return render_template_string(f.read())
-    except FileNotFoundError:
-        return "<h1>Index.html no encontrado</h1>", 404
+    return send_from_directory(STATIC_DIR, "index.html")
 
 
 @app.route("/contratos", methods=["GET"])
